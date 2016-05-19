@@ -3,11 +3,11 @@ package main
 import (
 	"encoding/xml"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/jung-kurt/gofpdf"
 )
@@ -37,7 +37,7 @@ type ByName []entry
 
 func (a ByName) Len() int           { return len(a) }
 func (a ByName) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByName) Less(i, j int) bool { return a[i].Name < a[j].Name }
+func (a ByName) Less(i, j int) bool { return strings.ToLower(a[i].Name) < strings.ToLower(a[j].Name) }
 
 type phonebook struct {
 	Event   string  `xml:"event"`
@@ -110,10 +110,9 @@ func main() {
 	lm, _, _, bm := pdf.GetMargins()
 	AddNewPage(pdf)
 	yoffset = 15 + 15
-	for i, e := range pb.Entries {
+	for _, e := range pb.Entries {
 		AddEntry(pdf, yoffset, lm, e, tr)
 		yoffset = yoffset + 10
-		fmt.Println(i, e)
 		if yoffset > (height - bm - 15) {
 			AddNewPage(pdf)
 			yoffset = 15 + 15
