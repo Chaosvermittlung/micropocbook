@@ -63,9 +63,9 @@ func AddNewPage(pdf *gofpdf.Fpdf) {
 	pdf.CellFormat(0, 15, "Extension", "B", 0, "RM", false, 0, "")
 }
 
-func AddEntry(pdf *gofpdf.Fpdf, yoffset float64, xoffset float64, e entry) {
+func AddEntry(pdf *gofpdf.Fpdf, yoffset float64, xoffset float64, e entry, tr func(string) string) {
 	pdf.SetXY(xoffset, yoffset)
-	pdf.CellFormat(105, 15, e.Name, "", 0, "LM", false, 0, "")
+	pdf.CellFormat(105, 15, tr(e.Name), "", 0, "LM", false, 0, "")
 	pdf.CellFormat(0, 15, strconv.Itoa(e.Extension), "", 0, "RM", false, 0, "")
 }
 
@@ -93,6 +93,7 @@ func main() {
 	yoffset := float64(30)
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
 	if !*nofrontpage {
 		pdf.AddPage()
 		imageinfo := pdf.RegisterImage(*logo, "")
@@ -100,17 +101,17 @@ func main() {
 		texty := (105/imageinfo.Width())*imageinfo.Height() + 30
 		pdf.SetFont(*font, "B", 30)
 		textx := (width - pdf.GetStringWidth(*title)) / 2
-		pdf.Text(textx, yoffset+texty, *title)
+		pdf.Text(textx, yoffset+texty, tr(*title))
 		pdf.SetFont(*font, "", 20)
 		texty = texty + 20
 		textx = (width - pdf.GetStringWidth(pb.Event)) / 2
-		pdf.Text(textx, yoffset+texty, pb.Event)
+		pdf.Text(textx, yoffset+texty, tr(pb.Event))
 	}
 	lm, _, _, bm := pdf.GetMargins()
 	AddNewPage(pdf)
 	yoffset = 15 + 15
 	for i, e := range pb.Entries {
-		AddEntry(pdf, yoffset, lm, e)
+		AddEntry(pdf, yoffset, lm, e, tr)
 		yoffset = yoffset + 10
 		fmt.Println(i, e)
 		if yoffset > (height - bm - 15) {
