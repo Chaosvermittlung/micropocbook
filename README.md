@@ -11,13 +11,13 @@ Font to use (default: "Arial")
 -logo string:
 Logo to appear on the frontpage (default "chaosvermittlung.png")
 
--nofrontpage
+-nofrontpage:
 Remove frontpage from PDF
 
--sort string
+-sort string:
 Defines on base of what data the Phonebook is sorted. Available options: name, extension (default: "name")
 
--title string
+-title string:
 Title on the frontpage (default: "Telefonbuch / Phonebook")
 
 
