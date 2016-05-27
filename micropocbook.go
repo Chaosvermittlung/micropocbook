@@ -5,9 +5,11 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/jung-kurt/gofpdf"
 )
@@ -18,6 +20,7 @@ var event = flag.String("event", "", "Override event string from phonebook from 
 var font = flag.String("font", "Arial", "Font to use in the phonebook")
 var sorting = flag.String("sort", "name", "Defines which data to sort the phonebook. Avaiable options: name, extension")
 var title = flag.String("title", "Telefonbuch / Phonebook", "Title of the frontpage")
+var textfile = flag.Bool("text", false, "Print txt instead of pdf")
 
 var width = float64(210)
 var height = float64(297)
@@ -90,6 +93,14 @@ func main() {
 		pb.Event = *event
 	}
 
+	if *textfile {
+		generatetext(pb)
+	} else {
+		generatepdf(pb)
+	}
+}
+
+func generatepdf(pb phonebook) {
 	yoffset := float64(30)
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
@@ -119,8 +130,55 @@ func main() {
 		}
 	}
 
-	err = pdf.OutputFileAndClose("phonebook.pdf")
+	err := pdf.OutputFileAndClose("phonebook.pdf")
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func formatline(left, right string, textwidth int) string {
+	total := utf8.RuneCountInString(left) + utf8.RuneCountInString(right)
+	add := textwidth - total
+	res := left
+	for i := 0; i < add; i++ {
+		res = res + " "
+	}
+	res = res + right
+	return res + "\n"
+}
+
+func formatdivider(textwidth int) string {
+	res := ""
+	for i := 0; i < textwidth; i++ {
+		res = res + "-"
+	}
+	return res + "\n"
+}
+
+func generatetext(pb phonebook) {
+	textwidth := 80
+	f, err := os.OpenFile("phonebook.txt", os.O_CREATE|os.O_WRONLY, 0600)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	tw := formatline("Name", "Extension", textwidth)
+	_, err = f.WriteString(tw)
+	if err != nil {
+		log.Fatal(err)
+	}
+	tw = formatdivider(textwidth)
+	_, err = f.WriteString(tw)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, e := range pb.Entries {
+		tw = formatline(e.Name, strconv.Itoa(e.Extension), textwidth)
+		_, err = f.WriteString(tw)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
