@@ -54,7 +54,7 @@ func loadPhonebook(filename string) (phonebook, error) {
 		return p, err
 	}
 	err = xml.Unmarshal(body, &p)
-	return p, nil
+	return p, err
 }
 
 func AddNewPage(pdf *gofpdf.Fpdf) {
