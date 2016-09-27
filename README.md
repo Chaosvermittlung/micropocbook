@@ -11,8 +11,8 @@ Font to use (default: "Arial")
 -logo string:
 Logo to appear on the frontpage (default "chaosvermittlung.png")
 
--nofrontpage:
-Remove frontpage from PDF
+-nofrontpage boolean:
+Remove frontpage from PDF (default: false)
 
 -sort string:
 Defines on base of what data the Phonebook is sorted. Available options: name, extension (default: "name")
@@ -20,6 +20,8 @@ Defines on base of what data the Phonebook is sorted. Available options: name, e
 -title string:
 Title on the frontpage (default: "Telefonbuch / Phonebook")
 
+-text boolean:
+Print as txt file not as pdf (default: false)
 
 ## Example 
 https://files.chaosvermittlung.de/phonebook.pdf
