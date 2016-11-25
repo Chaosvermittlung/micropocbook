@@ -1,6 +1,9 @@
 # micropocbook
 Uses the XML Phonebook from micropoc.de and generates a PDF Phonebook
 
+## Usage:
+./micropocbook phonebook.xml
+
 ## Options
 -event string:
 Overrides event string from phonebook XML
