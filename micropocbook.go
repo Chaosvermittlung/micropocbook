@@ -66,10 +66,10 @@ func AddNewPage(pdf *gofpdf.Fpdf) {
 	pdf.CellFormat(0, 15, "Extension", "B", 0, "RM", false, 0, "")
 }
 
-func AddEntry(pdf *gofpdf.Fpdf, yoffset float64, xoffset float64, e entry, tr func(string) string) {
+func AddEntry(pdf *gofpdf.Fpdf, yoffset float64, xoffset float64, e entry, fill bool, tr func(string) string) {
 	pdf.SetXY(xoffset, yoffset)
-	pdf.CellFormat(105, 15, tr(e.Name), "", 0, "LM", false, 0, "")
-	pdf.CellFormat(0, 15, strconv.Itoa(e.Extension), "", 0, "RM", false, 0, "")
+	pdf.CellFormat(105, 15, tr(e.Name), "", 0, "LM", fill, 0, "")
+	pdf.CellFormat(0, 15, strconv.Itoa(e.Extension), "", 0, "RM", fill, 0, "")
 }
 
 func main() {
@@ -121,8 +121,14 @@ func generatepdf(pb phonebook) {
 	lm, _, _, bm := pdf.GetMargins()
 	AddNewPage(pdf)
 	yoffset = 15 + 15
-	for _, e := range pb.Entries {
-		AddEntry(pdf, yoffset, lm, e, tr)
+	pdf.SetFillColor(191, 191, 191)
+	for i, e := range pb.Entries {
+		if i%2 == 0 {
+			pdf.SetFillColor(191, 191, 191)
+		} else {
+			pdf.SetFillColor(255, 255, 255)
+		}
+		AddEntry(pdf, yoffset, lm, e, true, tr)
 		yoffset = yoffset + 10
 		if yoffset > (height - bm - 15) {
 			AddNewPage(pdf)
